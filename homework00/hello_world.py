@@ -1,2 +1,8 @@
+"""function to return text"""
+
+
 def text():
-    return message
+    """returns message"""
+    message = input("")
+    n = message
+    return n
