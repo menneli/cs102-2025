@@ -3,6 +3,5 @@
 
 def text():
     """returns message"""
-    message = input("")
-    n = message
-    return n
+    message = "message"
+    return message
