@@ -1,3 +1,6 @@
+"""Implements Vigenere cipher for encryption and decryption"""
+
+
 def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     """
     Encrypts plaintext using a Vigenere cipher.
@@ -9,7 +12,16 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     'LXFOPVEFRNHR'
     """
     ciphertext = ""
-    # PUT YOUR CODE HERE
+    keyword = (keyword * ((len(plaintext) // len(keyword)) + 1))[: len(plaintext)]
+    for x, y in zip(plaintext, keyword):
+        if x.isupper():
+            shift = ord(y.upper()) - ord("A")
+            ciphertext += chr((ord(x) - ord("A") + shift) % 26 + ord("A"))
+        elif x.islower():
+            shift = ord(y.lower()) - ord("a")
+            ciphertext += chr((ord(x) - ord("a") + shift) % 26 + ord("a"))
+        else:
+            ciphertext += x
     return ciphertext
 
 
@@ -24,5 +36,14 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     'ATTACKATDAWN'
     """
     plaintext = ""
-    # PUT YOUR CODE HERE
+    keyword = (keyword * ((len(ciphertext) // len(keyword)) + 1))[: len(ciphertext)]
+    for i, j in zip(ciphertext, keyword):
+        if i.isupper():
+            shift = ord(j.upper()) - ord("A")
+            plaintext += chr((ord(i) - ord("A") - shift) % 26 + ord("A"))
+        elif i.islower():
+            shift = ord(j.lower()) - ord("a")
+            plaintext += chr((ord(i) - ord("a") - shift) % 26 + ord("a"))
+        else:
+            plaintext += i
     return plaintext
