@@ -15,7 +15,6 @@ def remove_wall(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) -> Li
     :param grid:
     :param coord:
     :return:
-
     """
 
     row = coord[0]
@@ -94,24 +93,24 @@ def make_step(grid: List[List[Union[str, int]]], k: int) -> List[List[Union[str,
     """
 
     def find_zeroed(grid, index):
-        res = []
+        results = []
         if index[0] != len(grid) - 1 and grid[index[0] + 1][index[1]] == 0:
-            res.append((index[0] + 1, index[1]))
+            results.append((index[0] + 1, index[1]))
         if index[0] != 0 and grid[index[0] - 1][index[1]] == 0:
-            res.append((index[0] - 1, index[1]))
+            results.append((index[0] - 1, index[1]))
         if index[1] != len(grid[0]) - 1 and grid[index[0]][index[1] + 1] == 0:
-            res.append((index[0], index[1] + 1))
+            results.append((index[0], index[1] + 1))
         if index[1] != 0 and grid[index[0]][index[1] - 1] == 0:
-            res.append((index[0], index[1] - 1))
+            results.append((index[0], index[1] - 1))
 
-        return res
+        return results
 
-    ind = []
+    indices = []
     for x in range(len(grid)):
         for y in range(len(grid[0])):
             if grid[x][y] == k:
-                ind.append((x, y))
-    for i in ind:
+                indices.append((x, y))
+    for i in indices:
         zeroed = find_zeroed(grid, i)
         for j in zeroed:
             grid[j[0]][j[1]] = k + 1
@@ -129,17 +128,17 @@ def shortest_path(
     """
 
     def value_around_index(grid, index, value):
-        results = []
+        res = []
         if index[0] != len(grid) - 1 and grid[index[0] + 1][index[1]] == value:
-            results.append((index[0] + 1, index[1]))
+            res.append((index[0] + 1, index[1]))
         if index[0] != 0 and grid[index[0] - 1][index[1]] == value:
-            results.append((index[0] - 1, index[1]))
+            res.append((index[0] - 1, index[1]))
         if index[1] != len(grid[0]) - 1 and grid[index[0]][index[1] + 1] == value:
-            results.append((index[0], index[1] + 1))
+            res.append((index[0], index[1] + 1))
         if index[1] != 0 and grid[index[0]][index[1] - 1] == value:
-            results.append((index[0], index[1] - 1))
+            res.append((index[0], index[1] - 1))
 
-        return results
+        return res
 
     path = []
     cur_value = int(grid[exit_coord[0]][exit_coord[1]])
@@ -203,8 +202,8 @@ def solve_maze(
     if len(exits) != 2:
         return grid, None
 
-    for some_exit in exits:
-        if encircled_exit(grid, some_exit):
+    for an_exit in exits:
+        if encircled_exit(grid, an_exit):
             return grid, None
 
     start_coord, end_coord = exits
