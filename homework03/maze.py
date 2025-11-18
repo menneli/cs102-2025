@@ -15,6 +15,7 @@ def remove_wall(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) -> Li
     :param grid:
     :param coord:
     :return:
+
     """
 
     row = coord[0]
