@@ -19,9 +19,9 @@ def draw_maze(grid: List[List[str]], size: int = 10):
             if cell == " ":
                 color = "White"
             elif cell == "■":
-                color = "red"
+                color = "black"
             elif cell == "X":
-                color = "purple"
+                color = "green"
             draw_cell(y, x, color, size)
 
 
