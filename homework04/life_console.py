@@ -1,22 +1,117 @@
+"""
+Game of Life: console edition
+"""
+
 import curses
+import random
+import time
+from typing import List, Tuple
 
-from life import GameOfLife
-from ui import UI
+Cell = Tuple[int, int]
+Grid = List[List[int]]
 
 
-class Console(UI):
-    def __init__(self, life: GameOfLife) -> None:
-        super().__init__(life)
+class GameOfLife:
+    """Defines the Game"""
 
-    def draw_borders(self, screen) -> None:
-        """ Отобразить рамку. """
-        pass
+    def __init__(self, width=640, height=480, cell_size=10, speed=10, randomize=False, max_generations=None):
+        self.randomize = randomize
+        self.max_generations = max_generations
+        self.width = width
+        self.height = height
+        self.cell_size = cell_size
+        self.generations = 0
+        self.grid: Grid = self.create_grid(randomize=False)  # start empty grid
+        self.randomize = random
 
-    def draw_grid(self, screen) -> None:
-        """ Отобразить состояние клеток. """
-        pass
+    def create_grid(self, randomize: bool = False) -> Grid:
+        """Creates a grid"""
 
-    def run(self) -> None:
-        screen = curses.initscr()
-        # PUT YOUR CODE HERE
-        curses.endwin()
+        if randomize:
+            return [[random.randint(0, 1) for _ in range(self.width)] for _ in range(self.height)]
+        else:
+            return [[0 for _ in range(self.width)] for _ in range(self.height)]
+
+    def get_neighbours(self, cell: Cell) -> List[int]:
+        """Finds neighbours of a cell"""
+
+        i, j = cell
+        neighbours = []
+        for x in range(i - 1, i + 2):
+            for y in range(j - 1, j + 2):
+                if (x, y) != (i, j) and 0 <= x < self.height and 0 <= y < self.width:
+                    neighbours.append(self.grid[x][y])
+        return neighbours
+
+    def get_next_generation(self) -> Grid:
+        """Finds next generation of cells"""
+
+        new_grid = self.create_grid(randomize=False)
+        for i in range(self.height):
+            for j in range(self.width):
+                alive_neighbours = sum(self.get_neighbours((i, j)))
+                if self.grid[i][j] == 1:
+                    new_grid[i][j] = 1 if alive_neighbours in (2, 3) else 0
+                else:
+                    new_grid[i][j] = 1 if alive_neighbours == 3 else 0
+        return new_grid
+
+    @property
+    def grid(self):
+        return self.curr_generation
+
+    @grid.setter
+    def grid(self, value):
+        self.curr_generation = value
+
+    def step(self) -> None:
+        """Changes the previous generation to next"""
+
+        self.prev_generation = [row[:] for row in self.curr_generation]
+        self.curr_generation = self.get_next_generation()
+        self.generations += 1
+
+
+class ConsoleUI:
+    """Console version of Game of Life (matches the pygame GUI structure)."""
+
+    def __init__(self, life: GameOfLife, speed: float = 0.1):
+        self.life = life
+        self.speed = speed  # seconds between frames
+
+    def draw(self, screen):
+        screen.clear()
+        height, width = screen.getmaxyx()
+
+        for i, row in enumerate(self.life.curr_generation):
+            if i >= height - 1:
+                break
+            for j, cell in enumerate(row):
+                if j >= width - 1:
+                    break
+                screen.addch(i, j, "O" if cell else " ")
+
+        screen.refresh()
+
+    def run(self, screen):
+        curses.curs_set(0)
+        screen.nodelay(True)
+
+        while self.life.is_changing and not self.life.is_max_generations_exceeded:
+            key = screen.getch()
+            if key == ord("q"):
+                break
+
+            self.life.step()
+            self.draw(screen)
+            time.sleep(self.speed)
+
+
+def main(stdscr):
+    life = GameOfLife((25, 50), randomize=True, max_generations=None)
+    ui = ConsoleUI(life, speed=0.05)
+    ui.run(stdscr)
+
+
+if __name__ == "__main__":
+    curses.wrapper(main)
