@@ -5,7 +5,7 @@ Game of Life: console edition
 import curses
 import random
 import time
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 Cell = Tuple[int, int]
 Grid = List[List[int]]
@@ -14,15 +14,16 @@ Grid = List[List[int]]
 class GameOfLife:
     """Defines the Game"""
 
-    def __init__(self, width=640, height=480, cell_size=10, speed=10, randomize=False, max_generations=None):
+    def __init__(self, size: Tuple[int, int], randomize: bool = False, max_generations: Optional[int] = None):
+        self.height, self.width = size
+        self.cell_size = 1  # cell_size unused in console? Or just default 1
+        self.speed = 10  # or remove if unused here
         self.randomize = randomize
         self.max_generations = max_generations
-        self.width = width
-        self.height = height
-        self.cell_size = cell_size
         self.generations = 0
-        self.grid: Grid = self.create_grid(randomize=False)  # start empty grid
-        self.randomize = random
+        self.grid: Grid = self.create_grid(randomize=randomize)
+        self.prev_generation = self.create_grid(randomize=False)
+        self.curr_generation = self.create_grid(randomize=randomize)
 
     def create_grid(self, randomize: bool = False) -> Grid:
         """Creates a grid"""
@@ -63,6 +64,16 @@ class GameOfLife:
     @grid.setter
     def grid(self, value):
         self.curr_generation = value
+
+    @property
+    def is_changing(self) -> bool:
+        """Check if the grid has changed from the previous generation."""
+        return hasattr(self, "prev_generation") and self.curr_generation != self.prev_generation
+
+    @property
+    def is_max_generations_exceeded(self) -> bool:
+        """Check if max generations limit was reached."""
+        return self.max_generations is not None and self.generations >= self.max_generations
 
     def step(self) -> None:
         """Changes the previous generation to next"""

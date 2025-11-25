@@ -105,6 +105,23 @@ class GUI:
                 pygame.draw.rect(self.screen, color, rect)
                 pygame.draw.rect(self.screen, pygame.Color("black"), rect, 1)
 
+    def handle_pause_events(self) -> bool:
+        """Handles events while paused; toggles cell state on mouse click"""
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and self.paused:
+                mouse_pos = pygame.mouse.get_pos()
+                row = mouse_pos[1] // self.cell_size
+                col = mouse_pos[0] // self.cell_size
+                if 0 <= row < self.life.rows and 0 <= col < self.life.cols:
+                    current = self.life.curr_generation[row][col]
+                    self.life.curr_generation[row][col] = 0 if current == 1 else 1
+            elif event.type == QUIT:
+                return False
+            elif event.type == KEYDOWN and event.key == K_SPACE:
+                self.paused = not self.paused
+        return True
+
     def run(self) -> None:
         """Begins the Game"""
 
@@ -112,17 +129,30 @@ class GUI:
         clock = pygame.time.Clock()
         running = True
         while running and self.life.is_changing and not self.life.is_max_generations_exceeded:
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    running = False
-                elif event.type == KEYDOWN:
-                    if event.key == K_SPACE:
-                        self.paused = not self.paused
+            if self.paused:
+                running = self.handle_pause_events()
+            else:
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        running = False
+                    elif event.type == KEYDOWN:
+                        if event.key == K_SPACE:
+                            self.paused = not self.paused
 
-            if not self.paused:
-                self.life.step()
+                if not self.paused:
+                    self.life.step()
 
             self.draw_grid()
+
+            # Highlight cell under mouse if paused
+            if self.paused:
+                mouse_pos = pygame.mouse.get_pos()
+                row = mouse_pos[1] // self.cell_size
+                col = mouse_pos[0] // self.cell_size
+                if 0 <= row < self.life.rows and 0 <= col < self.life.cols:
+                    rect = pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size)
+                    pygame.draw.rect(self.screen, pygame.Color("red"), rect, 2)  # red border
+
             pygame.display.flip()
             clock.tick(self.speed)
 
