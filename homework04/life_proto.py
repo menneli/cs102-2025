@@ -29,7 +29,7 @@ class GameOfLife:
         self.speed = speed
 
         self.generations = 0
-        self.max_generations = None  # You can set this if needed
+        self.max_generations = None
         self.prev_generation = self.create_grid()
         self.curr_generation = self.create_grid(randomize=True)
 
