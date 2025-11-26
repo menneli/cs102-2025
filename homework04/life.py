@@ -6,9 +6,6 @@ import pathlib
 import random
 from typing import List, Optional, Tuple
 
-import pygame
-from pygame.locals import K_SPACE, KEYDOWN, QUIT
-
 Cell = Tuple[int, int]
 Grid = List[List[int]]
 
@@ -101,91 +98,3 @@ class GameOfLife:
         with open(filename, "w", encoding="utf-8") as f:
             for row in self.curr_generation:
                 f.write("".join(str(cell) for cell in row) + "\n")
-
-
-class GUI:
-    """Graphic interface"""
-
-    def __init__(self, life: GameOfLife, cell_size: int = 10, speed: int = 10) -> None:
-        """Initializes the Game"""
-
-        self.life = life
-        self.cell_size = cell_size
-        self.speed = speed
-        self.width = life.cols * cell_size
-        self.height = life.rows * cell_size
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Game of Life")
-        self.paused = False
-
-    def draw_grid(self) -> None:
-        """Creates the grid"""
-
-        self.screen.fill(pygame.Color("white"))
-        for i, row in enumerate(self.life.curr_generation):
-            for j, cell in enumerate(row):
-                color = pygame.Color("green") if cell else pygame.Color("white")
-                rect = pygame.Rect(j * self.cell_size, i * self.cell_size, self.cell_size, self.cell_size)
-                pygame.draw.rect(self.screen, color, rect)
-                pygame.draw.rect(self.screen, pygame.Color("black"), rect, 1)
-
-    def handle_pause_events(self) -> bool:
-        """Handles events while paused; toggles cell state on mouse click"""
-
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and self.paused:
-                mouse_pos = pygame.mouse.get_pos()
-                row = mouse_pos[1] // self.cell_size
-                col = mouse_pos[0] // self.cell_size
-                if 0 <= row < self.life.rows and 0 <= col < self.life.cols:
-                    current = self.life.curr_generation[row][col]
-                    self.life.curr_generation[row][col] = 0 if current == 1 else 1
-            elif event.type == QUIT:
-                return False
-            elif event.type == KEYDOWN and event.key == K_SPACE:
-                self.paused = not self.paused
-        return True
-
-    def run(self) -> None:
-        """Begins the Game"""
-
-        pygame.init()
-        clock = pygame.time.Clock()
-        running = True
-        while running and self.life.is_changing and not self.life.is_max_generations_exceeded:
-            if self.paused:
-                running = self.handle_pause_events()
-            else:
-                for event in pygame.event.get():
-                    if event.type == QUIT:
-                        running = False
-                    elif event.type == KEYDOWN:
-                        if event.key == K_SPACE:
-                            self.paused = not self.paused
-                        elif event.key == pygame.K_s:
-                            self.life.save(pathlib.Path("manual_save.txt"))
-                            print("Grid saved to manual_save.txt")
-
-                if not self.paused:
-                    self.life.step()
-
-            self.draw_grid()
-
-            if self.paused:
-                mouse_pos = pygame.mouse.get_pos()
-                row = mouse_pos[1] // self.cell_size
-                col = mouse_pos[0] // self.cell_size
-                if 0 <= row < self.life.rows and 0 <= col < self.life.cols:
-                    rect = pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size)
-                    pygame.draw.rect(self.screen, pygame.Color("red"), rect, 2)
-
-            pygame.display.flip()
-            clock.tick(self.speed)
-        self.life.save(pathlib.Path("final.txt"))
-        pygame.quit()
-
-
-if __name__ == "__main__":
-    life = GameOfLife((30, 50), randomize=True, max_generations=None)
-    gui = GUI(life, cell_size=15, speed=5)
-    gui.run()

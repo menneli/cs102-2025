@@ -67,12 +67,13 @@ class GameOfLife:
 
     @property
     def is_changing(self) -> bool:
-        """Check if the grid has changed from the previous generation."""
+        """Checks if the grid has changed from the previous generation"""
         return hasattr(self, "prev_generation") and self.curr_generation != self.prev_generation
 
     @property
     def is_max_generations_exceeded(self) -> bool:
-        """Check if max generations limit was reached."""
+        """Check if max generations limit was reached"""
+
         return self.max_generations is not None and self.generations >= self.max_generations
 
     def step(self) -> None:
@@ -93,7 +94,6 @@ class ConsoleUI:
     def draw(self, screen):
         screen.clear()
         height, width = screen.getmaxyx()
-
         for i, row in enumerate(self.life.curr_generation):
             if i >= height - 1:
                 break
@@ -101,13 +101,11 @@ class ConsoleUI:
                 if j >= width - 1:
                     break
                 screen.addch(i, j, "1" if cell else " ")
-
         screen.refresh()
 
     def run(self, screen):
         curses.curs_set(0)
         screen.nodelay(True)
-
         while self.life.is_changing and not self.life.is_max_generations_exceeded:
             key = screen.getch()
             if key == ord("q"):
