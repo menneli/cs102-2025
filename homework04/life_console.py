@@ -16,8 +16,8 @@ class GameOfLife:
 
     def __init__(self, size: Tuple[int, int], randomize: bool = False, max_generations: Optional[int] = None):
         self.height, self.width = size
-        self.cell_size = 1  # cell_size unused in console? Or just default 1
-        self.speed = 10  # or remove if unused here
+        self.cell_size = 1
+        self.speed = 10
         self.randomize = randomize
         self.max_generations = max_generations
         self.generations = 0
@@ -84,11 +84,11 @@ class GameOfLife:
 
 
 class ConsoleUI:
-    """Console version of Game of Life (matches the pygame GUI structure)."""
+    """Console version of Game of Life"""
 
     def __init__(self, life: GameOfLife, speed: float = 0.1):
         self.life = life
-        self.speed = speed  # seconds between frames
+        self.speed = speed
 
     def draw(self, screen):
         screen.clear()
@@ -100,7 +100,7 @@ class ConsoleUI:
             for j, cell in enumerate(row):
                 if j >= width - 1:
                     break
-                screen.addch(i, j, "O" if cell else " ")
+                screen.addch(i, j, "1" if cell else " ")
 
         screen.refresh()
 

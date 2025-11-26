@@ -20,18 +20,14 @@ class GameOfLife:
         self.height = height
         self.cell_size = cell_size
 
-        # Set window size and create window
         self.screen_size = width, height
         self.screen = pygame.display.set_mode(self.screen_size)
 
-        # Calculate number of cells vertically and horizontally
         self.cell_width = self.width // self.cell_size
         self.cell_height = self.height // self.cell_size
 
-        # Game speed
         self.speed = speed
 
-        # Initialize generations
         self.generations = 0
         self.max_generations = None  # You can set this if needed
         self.prev_generation = self.create_grid()

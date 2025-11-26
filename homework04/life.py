@@ -144,7 +144,6 @@ class GUI:
 
             self.draw_grid()
 
-            # Highlight cell under mouse if paused
             if self.paused:
                 mouse_pos = pygame.mouse.get_pos()
                 row = mouse_pos[1] // self.cell_size
