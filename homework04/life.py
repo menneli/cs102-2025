@@ -149,7 +149,7 @@ class GUI:
     def run(self) -> None:
         """Begins the Game"""
 
-        pygame.init()  # pylint: disable=no-member
+        pygame.init()
         clock = pygame.time.Clock()
         running = True
         while running and self.life.is_changing and not self.life.is_max_generations_exceeded:
@@ -182,7 +182,7 @@ class GUI:
             pygame.display.flip()
             clock.tick(self.speed)
         self.life.save(pathlib.Path("final.txt"))
-        pygame.quit()  # pylint: disable=no-member
+        pygame.quit()
 
 
 if __name__ == "__main__":

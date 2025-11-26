@@ -6,7 +6,7 @@ import random
 from typing import List, Tuple
 
 import pygame
-from pygame.locals import *
+from pygame.locals import QUIT
 
 Cell = Tuple[int, int]
 Grid = List[List[int]]
