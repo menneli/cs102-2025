@@ -19,15 +19,11 @@ class GameOfLife:
         self.width = width
         self.height = height
         self.cell_size = cell_size
-
         self.screen_size = width, height
         self.screen = pygame.display.set_mode(self.screen_size)
-
         self.cell_width = self.width // self.cell_size
         self.cell_height = self.height // self.cell_size
-
         self.speed = speed
-
         self.generations = 0
         self.max_generations = None
         self.prev_generation = self.create_grid()
