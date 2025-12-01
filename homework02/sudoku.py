@@ -64,7 +64,7 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     ['3', '6', '9']
     """
     _, col = pos
-    return [grid[r][col] for r in range(len(grid))]
+    return [row[col] for _, row in enumerate(grid)]
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
